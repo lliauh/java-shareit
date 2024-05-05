@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setId(userId);
-        if(isEmailUnique(user.getEmail())) {
+        if (isEmailUnique(user.getEmail())) {
             return UserMapper.toUserDto(userRepository.update(userId, user));
         } else if (userRepository.getUserById(userId).getEmail().equals(user.getEmail())) {
             return UserMapper.toUserDto(userRepository.update(userId, user));
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkIfUserExists(Long userId) {
-        if (!userRepository.isUserExist(userId) ) {
+        if (!userRepository.isUserExist(userId)) {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }
     }
