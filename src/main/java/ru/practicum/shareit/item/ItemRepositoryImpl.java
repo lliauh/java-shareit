@@ -44,7 +44,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         List<Item> usersItems = new ArrayList<>();
 
         for (Item item : items.values()) {
-            if (item.getOwner().getId() == userId) {
+            if (item.getOwner().getId().equals(userId)) {
                 usersItems.add(item);
             }
         }

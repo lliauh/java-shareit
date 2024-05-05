@@ -109,7 +109,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void checkIfUserIsOwner(Long itemId, Long userId) {
-        if (itemRepository.getItemById(itemId).getOwner().getId() != userId) {
+        if (!itemRepository.getItemById(itemId).getOwner().getId().equals(userId)) {
             throw new NoPermissionException(String.format("User id=%d does not have permission to edit item id=%d",
                     userId, itemId));
         }
