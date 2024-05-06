@@ -6,11 +6,11 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class User {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
     @Email
     @NotBlank
-    String email;
+    private String email;
 
     public User(String name, String email) {
         this.name = name;

@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
@@ -32,38 +32,22 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item getItemById(Long itemId) {
-        if (items.containsKey(itemId)) {
-            return items.get(itemId);
-        }
-
-        return null;
+        return items.get(itemId);
     }
 
     @Override
     public List<Item> getAllItemsByOwner(Long userId) {
-        List<Item> usersItems = new ArrayList<>();
-
-        for (Item item : items.values()) {
-            if (item.getOwner().getId().equals(userId)) {
-                usersItems.add(item);
-            }
-        }
-
-        return usersItems;
+        return items.values().stream()
+                .filter(item -> item.getOwner().getId().equals(userId))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Item> searchItems(String text, Long userId) {
-        List<Item> searchResults = new ArrayList<>();
-
-        for (Item item : items.values()) {
-            if ((item.getName().toLowerCase().contains(text.toLowerCase())
-                    || item.getDescription().toLowerCase().contains(text.toLowerCase())) && item.getAvailable()) {
-                    searchResults.add(item);
-                }
-            }
-
-        return searchResults;
+        return items.values().stream()
+                .filter(item -> (item.getName().toLowerCase().contains(text.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(text.toLowerCase())) && item.getAvailable())
+                .collect(Collectors.toList());
     }
 
     @Override

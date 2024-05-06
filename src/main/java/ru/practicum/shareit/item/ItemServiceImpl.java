@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,16 +71,9 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getAllItemsByOwner(Long userId) {
         userService.checkIfUserExists(userId);
 
-        List<Item> usersItems = itemRepository.getAllItemsByOwner(userId);
-        List<ItemDto> itemsDto = new ArrayList<>();
-
-        if (!usersItems.isEmpty()) {
-            for (Item item : usersItems) {
-                itemsDto.add(ItemMapper.toItemDto(item));
-            }
-        }
-
-        return itemsDto;
+        return itemRepository.getAllItemsByOwner(userId).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -90,16 +84,9 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
 
-        List<Item> searchResults = itemRepository.searchItems(text, userId);
-        List<ItemDto> searchResultsDto = new ArrayList<>();
-
-        if (!searchResults.isEmpty()) {
-            for (Item item : searchResults) {
-                searchResultsDto.add(ItemMapper.toItemDto(item));
-            }
-        }
-
-        return searchResultsDto;
+        return itemRepository.searchItems(text, userId).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     private void checkIfItemExists(Long itemId) {

@@ -8,8 +8,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,16 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.getAllUsers();
-        List<UserDto> usersDto = new ArrayList<>();
-
-        if (!users.isEmpty()) {
-            for (User user : users) {
-                usersDto.add(UserMapper.toUserDto(user));
-            }
-        }
-
-        return usersDto;
+        return userRepository.getAllUsers().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override

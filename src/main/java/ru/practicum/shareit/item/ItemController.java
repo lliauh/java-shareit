@@ -16,31 +16,37 @@ import java.util.List;
 @Slf4j
 public class ItemController {
     private final ItemService itemService;
+    private final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(USER_ID_HEADER) Long userId, @RequestBody @Valid ItemDto itemDto) {
+        log.info("Creating new item={} by user id={}", itemDto, userId);
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto editItem(@PathVariable Long itemId,
-                            @RequestHeader("X-Sharer-User-Id") Long userId,
+                            @RequestHeader(USER_ID_HEADER) Long userId,
                             @RequestBody ItemDto itemDto) {
+        log.info("Updating item id={} by user id={}, updated item={}", itemId, userId, itemDto);
         return itemService.editItem(itemId, userId, itemDto);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable Long itemId) {
+        log.info("Getting item id={}", itemId);
         return itemService.getItemById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllItemsByOwner(@RequestHeader(USER_ID_HEADER) Long userId) {
+        log.info("Getting all items by user id={}", userId);
         return itemService.getAllItemsByOwner(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> searchItems(@RequestParam String text, @RequestHeader(USER_ID_HEADER) Long userId) {
+        log.info("Searching available items by user id={}, search query={}", userId, text);
         return itemService.searchItems(text, userId);
     }
 }

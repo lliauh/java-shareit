@@ -20,10 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserById(Long userId) {
-        if (users.containsKey(userId)) {
-            return users.get(userId);
-        }
-        return null;
+        return users.get(userId);
     }
 
     @Override

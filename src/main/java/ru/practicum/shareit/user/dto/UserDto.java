@@ -7,11 +7,11 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserDto {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
     @Email
     @NotBlank
-    String email;
+    private String email;
 
     public UserDto(Long id, String name, String email) {
         this.id = id;
