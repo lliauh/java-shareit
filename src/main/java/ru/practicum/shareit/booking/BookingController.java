@@ -6,6 +6,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
+import ru.practicum.shareit.booking.model.BookingSearchState;
+import ru.practicum.shareit.exception.ValidationException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -44,13 +46,32 @@ public class BookingController {
     public List<BookingOutDto> getUserBookingsByState(@RequestParam(defaultValue = "ALL") String state,
                                                   @RequestHeader(USER_ID_HEADER) Long userId) {
         log.info("User id={} is trying to get his bookings in state={}", userId, state);
-        return bookingService.getUserBookingsByState(state, userId);
+
+        checkSearchQueryState(state);
+        BookingSearchState searchState = BookingSearchState.valueOf(state);
+
+        return bookingService.getUserBookingsByState(searchState, userId);
     }
 
     @GetMapping("/owner")
-    public List<BookingOutDto> getBookingsOnUserItemsByState(@RequestParam(defaultValue = "ALL") String state,
+    public List<BookingOutDto> getBookingsOnUserItemsByState(@RequestParam(defaultValue = "ALL")
+                                                                 String state,
                                                              @RequestHeader(USER_ID_HEADER) Long userId) {
         log.info("User id={} is trying to get bookings on his items in state={}", userId, state);
-        return bookingService.getBookingsOnUserItemsByState(state, userId);
+
+        checkSearchQueryState(state);
+        BookingSearchState searchState = BookingSearchState.valueOf(state);
+
+        return bookingService.getBookingsOnUserItemsByState(searchState, userId);
+    }
+
+    private void checkSearchQueryState(String state) {
+        for (BookingSearchState enumState : BookingSearchState.values()) {
+            if (enumState.name().equals(state)) {
+                return;
+            }
+        }
+
+        throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
     }
 }

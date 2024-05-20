@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingSearchState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.NoPermissionException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -34,10 +35,10 @@ public class BookingServiceImpl implements BookingService {
         userService.checkIfUserExists(userId);
 
         Booking booking = bookingMapper.toBooking(bookingDto);
+        checkIfBookingIsValid(booking, userId);
+
         booking.setBooker(userRepository.getReferenceById(userId));
         booking.setStatus(BookingStatus.WAITING);
-
-        checkIfBookingIsValid(booking);
 
         return BookingMapper.toBookingOutDto(bookingRepository.save(booking));
     }
@@ -51,13 +52,8 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.getReferenceById(bookingId);
 
-        if (approved) {
-            booking.setStatus(BookingStatus.APPROVED);
-        }
-
-        if (!approved) {
-            booking.setStatus(BookingStatus.REJECTED);
-        }
+        BookingStatus status = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
+        booking.setStatus(status);
 
         return BookingMapper.toBookingOutDto(bookingRepository.save(booking));
     }
@@ -67,9 +63,10 @@ public class BookingServiceImpl implements BookingService {
         checkIfBookingExist(bookingId);
         userService.checkIfUserExists(userId);
 
-        boolean isOwnerOfItem = bookingRepository.getReferenceById(bookingId).getItem().getOwner().getId()
-                .equals(userId);
-        boolean isBooker = bookingRepository.getReferenceById(bookingId).getBooker().getId().equals(userId);
+        Booking booking = bookingRepository.getReferenceById(bookingId);
+
+        boolean isOwnerOfItem = booking.getItem().getOwner().getId().equals(userId);
+        boolean isBooker = booking.getBooker().getId().equals(userId);
 
         if (!isOwnerOfItem && !isBooker) {
             throw new NoPermissionException(String.format("User id=%d doesn't have permission to get " +
@@ -80,31 +77,31 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> getUserBookingsByState(String state, Long userId) {
+    public List<BookingOutDto> getUserBookingsByState(BookingSearchState state, Long userId) {
         userService.checkIfUserExists(userId);
 
         switch (state) {
-            case "ALL":
+            case ALL:
                 return bookingRepository.getAllUserBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "CURRENT":
+            case CURRENT:
                 return bookingRepository.getCurrentUserBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "PAST":
+            case PAST:
                 return bookingRepository.getPastUserBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "FUTURE":
+            case FUTURE:
                 return bookingRepository.getFutureUserBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "WAITING":
+            case WAITING:
                 return bookingRepository.getUserBookingsWithStatusWaiting(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "REJECTED":
+            case REJECTED:
                 return bookingRepository.getUserBookingsWithStatusRejected(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
@@ -114,31 +111,31 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> getBookingsOnUserItemsByState(String state, Long userId) {
+    public List<BookingOutDto> getBookingsOnUserItemsByState(BookingSearchState state, Long userId) {
         userService.checkIfUserExists(userId);
 
         switch (state) {
-            case "ALL":
+            case ALL:
                 return bookingRepository.getAllOwnerBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "CURRENT":
+            case CURRENT:
                 return bookingRepository.getCurrentOwnerBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "PAST":
+            case PAST:
                 return bookingRepository.getPastOwnerBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "FUTURE":
+            case FUTURE:
                 return bookingRepository.getFutureOwnerBookings(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "WAITING":
+            case WAITING:
                 return bookingRepository.getOwnerBookingsWithStatusWaiting(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
-            case "REJECTED":
+            case REJECTED:
                 return bookingRepository.getOwnerBookingsWithStatusRejected(userId).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
@@ -147,18 +144,18 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void checkIfBookingIsValid(Booking booking) {
+    private void checkIfBookingIsValid(Booking booking, Long userId) {
         itemService.checkIfItemExists(booking.getItem().getId());
 
-        if (!itemService.getItemById(booking.getItem().getId(), booking.getBooker().getId()).getAvailable()) {
+        if (!itemService.getItemById(booking.getItem().getId(), userId).getAvailable()) {
             throw new ValidationException(String.format("Item id=%d is not available for booking",
                     booking.getItem().getId()));
         }
 
         if (itemRepository.getReferenceById(booking.getItem().getId()).getOwner().getId()
-                .equals(booking.getBooker().getId())) {
+                .equals(userId)) {
             throw new NoPermissionException(String.format("User id=%d can't book his own item id=%d",
-                    booking.getBooker().getId(), booking.getItem().getId()));
+                    userId, booking.getItem().getId()));
         }
 
         if (booking.getStart().isBefore(LocalDateTime.now())) {

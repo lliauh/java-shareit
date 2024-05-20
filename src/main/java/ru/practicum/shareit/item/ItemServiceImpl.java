@@ -44,28 +44,29 @@ public class ItemServiceImpl implements ItemService {
         checkIfItemExists(itemId);
         checkIfUserIsOwner(itemId, userId);
 
-        Item item = ItemMapper.toItem(itemDto);
+        Item editedItem = ItemMapper.toItem(itemDto);
+        Item currentItem = itemRepository.getReferenceById(itemId);
 
-        if (item.getName() == null) {
-            item.setName(itemRepository.getReferenceById(itemId).getName());
+        if (editedItem.getName() == null) {
+            editedItem.setName(currentItem.getName());
         }
 
-        if (item.getDescription() == null) {
-            item.setDescription(itemRepository.getReferenceById(itemId).getDescription());
+        if (editedItem.getDescription() == null) {
+            editedItem.setDescription(currentItem.getDescription());
         }
 
-        if (item.getAvailable() == null) {
-            item.setAvailable(itemRepository.getReferenceById(itemId).getAvailable());
+        if (editedItem.getAvailable() == null) {
+            editedItem.setAvailable(currentItem.getAvailable());
         }
 
-        if (item.getRequest() == null) {
-            item.setRequest(itemRepository.getReferenceById(itemId).getRequest());
+        if (editedItem.getRequest() == null) {
+            editedItem.setRequest(currentItem.getRequest());
         }
 
-        item.setId(itemId);
-        item.setOwner(itemRepository.getReferenceById(itemId).getOwner());
+        editedItem.setId(itemId);
+        editedItem.setOwner(currentItem.getOwner());
 
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        return ItemMapper.toItemDto(itemRepository.save(editedItem));
     }
 
     @Override
