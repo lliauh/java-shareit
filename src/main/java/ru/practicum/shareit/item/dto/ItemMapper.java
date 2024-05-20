@@ -8,8 +8,16 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null
+                item.getAvailable()
+        );
+    }
+
+    public static ItemOutDto toItemOutDto(Item item) {
+        return new ItemOutDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable()
         );
     }
 
