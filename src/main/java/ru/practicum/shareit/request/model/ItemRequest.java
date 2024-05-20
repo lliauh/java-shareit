@@ -8,7 +8,9 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "requests")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @RequiredArgsConstructor
 public class ItemRequest {
     @Id
