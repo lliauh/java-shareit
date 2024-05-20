@@ -10,9 +10,9 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select i from Item i where i.owner.id = ?1 order by i.id asc")
     List<Item> findAllByOwnerIdOrderById(Long userId);
-    
+
     @Query("select i from Item i " +
             "where upper(i.name) like upper(concat('%', :searchQuery, '%')) " +
             " or upper(i.description) like upper(concat('%', :searchQuery, '%'))")
-    List <Item> searchItems(@Param("searchQuery") String searchQuery);
+    List<Item> searchItems(@Param("searchQuery") String searchQuery);
 }
