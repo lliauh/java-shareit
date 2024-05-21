@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -18,7 +17,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
@@ -26,74 +25,52 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long userId) {
         checkIfUserExists(userId);
-        return UserMapper.toUserDto(userRepository.getUserById(userId));
+        return UserMapper.toUserDto(userRepository.getReferenceById(userId));
     }
 
     @Override
     public UserDto create(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        if (isEmailUnique(user.getEmail())) {
-            return UserMapper.toUserDto(userRepository.create(user));
-        } else {
-            throw new AlreadyExistsException(String.format("User with email=%s already exists", user.getEmail()));
-        }
+
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto update(Long userId, UserDto userDto) {
         checkIfUserExists(userId);
 
-        User user = UserMapper.toUser(userDto);
-        if (user.getEmail() == null) {
-            user.setEmail(userRepository.getUserById(userId).getEmail());
+        User updatedUser = UserMapper.toUser(userDto);
+        User currentUser = userRepository.getReferenceById(userId);
+
+        if (updatedUser.getEmail() == null) {
+            updatedUser.setEmail(currentUser.getEmail());
         }
 
-        if (user.getName() == null) {
-            user.setName(userRepository.getUserById(userId).getName());
+        if (updatedUser.getName() == null) {
+            updatedUser.setName(currentUser.getName());
         }
 
-        user.setId(userId);
-        if (isEmailUnique(user.getEmail())) {
-            return UserMapper.toUserDto(userRepository.update(userId, user));
-        } else if (userRepository.getUserById(userId).getEmail().equals(user.getEmail())) {
-            return UserMapper.toUserDto(userRepository.update(userId, user));
-        } else {
-            throw new AlreadyExistsException(String.format("User with email=%s already exists", user.getEmail()));
-        }
+        updatedUser.setId(userId);
+
+        return UserMapper.toUserDto(userRepository.save(updatedUser));
     }
 
     @Override
     public void deleteAllUsers() {
-        userRepository.deleteAllUsers();
+        userRepository.deleteAll();
     }
 
     @Override
     public void deleteUserById(Long userId) {
         checkIfUserExists(userId);
 
-        userRepository.deleteUserById(userId);
+        userRepository.deleteById(userId);
     }
 
     @Override
     public void checkIfUserExists(Long userId) {
-        if (!userRepository.isUserExist(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }
-    }
-
-    private Boolean isEmailUnique(String email) {
-        List<User> users = userRepository.getAllUsers();
-
-        if (users.isEmpty()) {
-            return true;
-        } else {
-            for (User user : users) {
-                if (user.getEmail().equals(email)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 }
