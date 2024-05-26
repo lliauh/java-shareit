@@ -5,6 +5,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests")
@@ -21,8 +22,14 @@ public class ItemRequest {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requestor_id")
+    @JoinColumn(name = "requester_id")
     private User requester;
+
+    private LocalDateTime created;
+
+    public ItemRequest(String description) {
+        this.description = description;
+    }
 
     @Override
     public boolean equals(Object o) {

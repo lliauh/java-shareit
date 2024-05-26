@@ -34,6 +34,10 @@ public class Comment {
 
     private LocalDateTime created;
 
+    public Comment(String text) {
+        this.text = text;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -44,9 +48,5 @@ public class Comment {
     @Override
     public int hashCode() {
         return getClass().hashCode();
-    }
-
-    public Comment(String text) {
-        this.text = text;
     }
 }

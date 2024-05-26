@@ -12,9 +12,9 @@ public interface ItemService {
 
     ItemDto getItemById(Long itemId, Long userId);
 
-    List<ItemDto> getAllItemsByOwner(Long userId);
+    List<ItemDto> getAllItemsByOwner(Long userId, Integer from, Integer size);
 
-    List<ItemDto> searchItems(String searchQuery, Long userId);
+    List<ItemDto> searchItems(String searchQuery, Long userId, Integer from, Integer size);
 
     void checkIfItemExists(Long itemId);
 

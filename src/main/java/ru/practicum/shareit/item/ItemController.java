@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Validated
@@ -40,15 +41,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByOwner(@RequestHeader(USER_ID_HEADER) Long userId) {
-        log.info("Getting all items by user id={}", userId);
-        return itemService.getAllItemsByOwner(userId);
+    public List<ItemDto> getAllItemsByOwner(@RequestHeader(USER_ID_HEADER) Long userId,
+                                            @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
+                                            @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size) {
+        log.info("Getting all items by user id={}, page starts from={}, size={}", userId, from, size);
+        return itemService.getAllItemsByOwner(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text, @RequestHeader(USER_ID_HEADER) Long userId) {
-        log.info("Searching available items by user id={}, search query={}", userId, text);
-        return itemService.searchItems(text, userId);
+    public List<ItemDto> searchItems(@RequestParam String text, @RequestHeader(USER_ID_HEADER) Long userId,
+                                     @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
+                                     @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size) {
+        log.info("Searching available items by user id={}, search query={}, page starts from={}, size={}",
+                userId, text, from, size);
+        return itemService.searchItems(text, userId, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

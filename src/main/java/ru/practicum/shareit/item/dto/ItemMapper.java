@@ -4,21 +4,33 @@ import ru.practicum.shareit.item.model.Item;
 
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
-        return new ItemDto(
+        ItemDto itemDto = new ItemDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable()
         );
+
+        if (item.getRequest() != null) {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
+
+        return itemDto;
     }
 
     public static ItemOutDto toItemOutDto(Item item) {
-        return new ItemOutDto(
+        ItemOutDto itemOutDto = new ItemOutDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable()
         );
+
+        if (item.getRequest() != null) {
+            itemOutDto.setRequestId(item.getRequest().getId());
+        }
+
+        return itemOutDto;
     }
 
     public static Item toItem(ItemDto itemDto) {
@@ -29,4 +41,13 @@ public class ItemMapper {
         );
     }
 
+    public static ItemCreatedForRequestDto toItemCreatedForRequestDto(Item item) {
+        return new ItemCreatedForRequestDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getRequest().getId(),
+                item.getAvailable()
+        );
+    }
 }
