@@ -107,7 +107,8 @@ public class ItemRequestControllerTest {
 
     @Test
     void testGetRequestById() throws Exception {
-        ItemRequestOutDto requestOutDto = new ItemRequestOutDto(5L, "Test request", LocalDateTime.now());
+        ItemRequestOutDto requestOutDto = new ItemRequestOutDto(5L, "Test request", LocalDateTime.now()
+                .withNano(0));
 
         when(itemRequestService.getRequestById(any(), any()))
                 .thenReturn(requestOutDto);
