@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.ItemCreatedForRequestDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestOutDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -119,5 +121,42 @@ public class ItemRequestServiceImplTest {
         verify(itemRequestsRepository, times(1)).getReferenceById(itemRequest.getId());
         verify(itemRequestsRepository, times(1)).existsById(itemRequest.getId());
         verifyNoMoreInteractions(itemRequestsRepository);
+    }
+
+    @Test
+    void testAddItemsToRequest() {
+        User owner = new User();
+        owner.setId(2L);
+        user.setName("Owner");
+        user.setEmail("owner@mail.nl");
+        Item item1 = new Item("Test item1", "Test item description", true, owner);
+        item1.setRequest(itemRequest);
+        Item item2 = new Item("Test item2", "Test item description2", true, owner);
+        item2.setRequest(itemRequest);
+
+        ItemCreatedForRequestDto item1ForRequest = new ItemCreatedForRequestDto(item1.getId(), item1.getName(),
+                item1.getDescription(), item1.getRequest().getId(), item1.getAvailable());
+        ItemCreatedForRequestDto item2ForRequest = new ItemCreatedForRequestDto(item2.getId(), item2.getName(),
+                item2.getDescription(), item2.getRequest().getId(), item2.getAvailable());
+
+        List<Item> itemsForRequest = List.of(item1, item2);
+        List<ItemCreatedForRequestDto> itemsForRequestDto = List.of(item1ForRequest, item2ForRequest);
+
+        when(itemRequestsRepository.getReferenceById(any())).thenReturn(itemRequest);
+        when(itemRequestsRepository.existsById(itemRequest.getId())).thenReturn(true);
+        when(itemRepository.findAllByRequestId(any())).thenReturn(Optional.of(itemsForRequest));
+
+        ItemRequestOutDto result = itemRequestService.getRequestById(user.getId(), itemRequest.getId());
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(result.getId(), itemRequest.getId());
+        Assertions.assertEquals(result.getDescription(), itemRequest.getDescription());
+        Assertions.assertEquals(result.getCreated(), itemRequest.getCreated());
+        Assertions.assertEquals(result.getItems(), itemsForRequestDto);
+        verify(itemRequestsRepository, times(1)).getReferenceById(itemRequest.getId());
+        verify(itemRequestsRepository, times(1)).existsById(itemRequest.getId());
+        verifyNoMoreInteractions(itemRequestsRepository);
+        verify(itemRepository,times(1)).findAllByRequestId(any());
+        verifyNoMoreInteractions(itemRepository);
     }
 }
