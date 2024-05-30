@@ -35,7 +35,7 @@ public class UserControllerTest {
 
     @Test
     void testGetAllUsers() throws Exception {
-        UserDto user = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto user = new UserDto(7L, "TestName", "test@mail.ts");
 
         when(userService.getAllUsers())
                 .thenReturn(List.of(user));
@@ -56,7 +56,7 @@ public class UserControllerTest {
 
     @Test
     void testGetUserById() throws Exception {
-        UserDto user = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto user = new UserDto(7L, "TestName", "test@mail.ts");
 
         when(userService.getUserById(any()))
                 .thenReturn(user);
@@ -76,8 +76,8 @@ public class UserControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        UserDto userIn = new UserDto(7L, "TestName" ,"test@mail.ts");
-        UserDto userOut  = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto userIn = new UserDto(7L, "TestName", "test@mail.ts");
+        UserDto userOut  = new UserDto(7L, "TestName", "test@mail.ts");
 
         when(userService.create(any()))
                 .thenReturn(userOut);
@@ -98,8 +98,8 @@ public class UserControllerTest {
 
     @Test
     void testUpdate() throws Exception {
-        UserDto userIn = new UserDto(7L, "TestName" ,"test@mail.ts");
-        UserDto userOut  = new UserDto(7L, "UpdatedName" ,"updated_test@mail.ts");
+        UserDto userIn = new UserDto(7L, "TestName", "test@mail.ts");
+        UserDto userOut  = new UserDto(7L, "UpdatedName", "updated_test@mail.ts");
 
         when(userService.update(any(), any()))
                 .thenReturn(userOut);

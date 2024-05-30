@@ -43,7 +43,7 @@ public class BookingControllerTest {
     @Test
     void testBookItem() throws Exception {
         ItemDto item = new ItemDto(12L, "Item1", "Test_description", true);
-        UserDto booker  = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto booker  = new UserDto(7L, "TestName", "test@mail.ts");
         BookingOutDto outDto = new BookingOutDto(10L, LocalDateTime.now().withNano(0),
                 LocalDateTime.now().withNano(0), item, booker,
                 BookingStatus.WAITING);
@@ -79,7 +79,7 @@ public class BookingControllerTest {
     @Test
     void testProcessRequest() throws Exception {
         ItemDto item = new ItemDto(12L, "Item1", "Test_description", true);
-        UserDto booker  = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto booker  = new UserDto(7L, "TestName", "test@mail.ts");
         BookingOutDto outDto = new BookingOutDto(10L, LocalDateTime.now().withNano(0),
                 LocalDateTime.now().withNano(0), item, booker,
                 BookingStatus.APPROVED);
@@ -112,7 +112,7 @@ public class BookingControllerTest {
     @Test
     void testGetBooking() throws Exception {
         ItemDto item = new ItemDto(12L, "Item1", "Test_description", true);
-        UserDto booker  = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto booker  = new UserDto(7L, "TestName", "test@mail.ts");
         BookingOutDto outDto = new BookingOutDto(10L, LocalDateTime.now().withNano(0),
                 LocalDateTime.now().withNano(0), item, booker,
                 BookingStatus.REJECTED);
@@ -145,7 +145,7 @@ public class BookingControllerTest {
     @Test
     void testGetUserBookingsByState() throws Exception {
         ItemDto item = new ItemDto(12L, "Item1", "Test_description", true);
-        UserDto booker  = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto booker  = new UserDto(7L, "TestName", "test@mail.ts");
         BookingOutDto outDto = new BookingOutDto(10L, LocalDateTime.now().withNano(0),
                 LocalDateTime.now().withNano(0), item, booker,
                 BookingStatus.WAITING);

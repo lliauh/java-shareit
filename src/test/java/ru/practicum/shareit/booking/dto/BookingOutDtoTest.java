@@ -20,7 +20,7 @@ public class BookingOutDtoTest {
     @Test
     void testSerialize() throws Exception {
         ItemDto item = new ItemDto(12L, "Item1", "Test_description", true);
-        UserDto booker  = new UserDto(7L, "TestName" ,"test@mail.ts");
+        UserDto booker  = new UserDto(7L, "TestName", "test@mail.ts");
         BookingOutDto dto = new BookingOutDto(10L, LocalDateTime.now(), LocalDateTime.now(), item, booker,
                 BookingStatus.WAITING);
 

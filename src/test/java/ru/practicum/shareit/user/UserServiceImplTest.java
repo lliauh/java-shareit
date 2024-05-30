@@ -42,8 +42,7 @@ public class UserServiceImplTest {
 
     @Test
     void testGetAllUsers() {
-        when(userRepository.findAll()).
-                thenReturn(new ArrayList<>());
+        when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<UserDto> result = userService.getAllUsers();
 
@@ -55,10 +54,8 @@ public class UserServiceImplTest {
 
     @Test
     void testGetUserById() {
-        when(userRepository.getReferenceById(any()))
-                .thenReturn(user);
-        when(userRepository.existsById(user.getId()))
-                .thenReturn(true);
+        when(userRepository.getReferenceById(any())).thenReturn(user);
+        when(userRepository.existsById(user.getId())).thenReturn(true);
 
         UserDto result = userService.getUserById(user.getId());
 
@@ -120,8 +117,7 @@ public class UserServiceImplTest {
 
     @Test
     void testDeleteUserById() {
-        when(userRepository.existsById(user.getId()))
-                .thenReturn(true);
+        when(userRepository.existsById(user.getId())).thenReturn(true);
         userService.deleteUserById(1L);
 
         verify(userRepository, times(1)).deleteById(anyLong());

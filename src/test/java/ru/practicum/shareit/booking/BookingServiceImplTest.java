@@ -170,8 +170,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetAllBookings() {
-        when(bookingRepository.getAllUserBookings(1L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getAllUserBookings(1L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getUserBookingsByState(BookingSearchState.ALL, user.getId(),
                 0, 10);
@@ -185,8 +185,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetCurrentBookings() {
-        when(bookingRepository.getCurrentUserBookings(1L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getCurrentUserBookings(1L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getUserBookingsByState(BookingSearchState.CURRENT, user.getId(),
                 0, 10);
@@ -200,8 +200,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetPastBookings() {
-        when(bookingRepository.getPastUserBookings(1L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getPastUserBookings(1L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getUserBookingsByState(BookingSearchState.PAST, user.getId(),
                 0, 10);
@@ -215,8 +215,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetFutureBookings() {
-        when(bookingRepository.getFutureUserBookings(1L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getFutureUserBookings(1L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getUserBookingsByState(BookingSearchState.FUTURE, user.getId(),
                 0, 10);
@@ -230,8 +230,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetWaitingBookings() {
-        when(bookingRepository.getUserBookingsWithStatusWaiting(1L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getUserBookingsWithStatusWaiting(1L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getUserBookingsByState(BookingSearchState.WAITING, user.getId(),
                 0, 10);
@@ -245,8 +245,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetRejectedBookings() {
-        when(bookingRepository.getUserBookingsWithStatusRejected(1L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getUserBookingsWithStatusRejected(1L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getUserBookingsByState(BookingSearchState.REJECTED, user.getId(),
                 0, 10);
@@ -260,8 +260,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetAllBookingsOnUserItemsByState() {
-        when(bookingRepository.getAllOwnerBookings(2L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getAllOwnerBookings(2L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getBookingsOnUserItemsByState(BookingSearchState.ALL, owner.getId(),
                 0, 10);
@@ -275,8 +275,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetCurrentBookingsOnUserItemsByState() {
-        when(bookingRepository.getCurrentOwnerBookings(2L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getCurrentOwnerBookings(2L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getBookingsOnUserItemsByState(BookingSearchState.CURRENT,
                 owner.getId(), 0, 10);
@@ -290,8 +290,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetPastBookingsOnUserItemsByState() {
-        when(bookingRepository.getPastOwnerBookings(2L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getPastOwnerBookings(2L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getBookingsOnUserItemsByState(BookingSearchState.PAST,
                 owner.getId(), 0, 10);
@@ -305,8 +305,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetFutureBookingsOnUserItemsByState() {
-        when(bookingRepository.getFutureOwnerBookings(2L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getFutureOwnerBookings(2L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getBookingsOnUserItemsByState(BookingSearchState.FUTURE,
                 owner.getId(), 0, 10);
@@ -320,8 +320,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetWaitingBookingsOnUserItemsByState() {
-        when(bookingRepository.getOwnerBookingsWithStatusWaiting(2L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getOwnerBookingsWithStatusWaiting(2L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getBookingsOnUserItemsByState(BookingSearchState.WAITING,
                 owner.getId(), 0, 10);
@@ -335,8 +335,8 @@ public class BookingServiceImplTest {
 
     @Test
     void testGetRejectedBookingsOnUserItemsByState() {
-        when(bookingRepository.getOwnerBookingsWithStatusRejected(2L, PageRequest.of(0,10))).
-                thenReturn(new ArrayList<>());
+        when(bookingRepository.getOwnerBookingsWithStatusRejected(2L, PageRequest.of(0,10)))
+                .thenReturn(new ArrayList<>());
 
         List<BookingOutDto> result = bookingService.getBookingsOnUserItemsByState(BookingSearchState.REJECTED,
                 owner.getId(), 0, 10);
