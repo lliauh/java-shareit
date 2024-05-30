@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests")
-@Getter
-@Setter
-@ToString
+@Data
 @RequiredArgsConstructor
 public class ItemRequest {
     @Id
@@ -29,17 +27,5 @@ public class ItemRequest {
 
     public ItemRequest(String description) {
         this.description = description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ItemRequest)) return false;
-        return id != null && id.equals(((ItemRequest) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

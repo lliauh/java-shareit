@@ -77,10 +77,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long itemId, Long userId) {
+    public ItemOutDto getItemById(Long itemId, Long userId) {
         checkIfItemExists(itemId);
 
-        ItemOutDto itemOutDto = addBookingsToItem(itemRepository.getReferenceById(itemId), userId);
+        Item item = itemRepository.getReferenceById(itemId);
+        ItemOutDto itemOutDto = addBookingsToItem(item, userId);
         addCommentsToItem(itemOutDto);
 
         return itemOutDto;
@@ -153,7 +154,7 @@ public class ItemServiceImpl implements ItemService {
         BookingEntity lbDto = new BookingEntity();
         BookingEntity nbDto = new BookingEntity();
 
-        if (isUserAnOwner(item.getId(), userId)) {
+        if (isUserAnOwner(item, userId)) {
             Optional<Booking> lastBooking = bookingRepository.getLastBooking(item.getId());
             Optional<Booking> nextBooking = bookingRepository.getNextBooking(item.getId());
 
@@ -183,8 +184,8 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private boolean isUserAnOwner(Long itemId, Long userId) {
-        return itemRepository.getReferenceById(itemId).getOwner().getId().equals(userId);
+    private boolean isUserAnOwner(Item item, Long userId) {
+        return item.getOwner().getId().equals(userId);
     }
 
     private void checkIfUserHasApprovedBookingInthePast(Long userId, Long itemId) {

@@ -32,7 +32,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public BookingOutDto processRequest(@PathVariable Long bookingId, @RequestParam @NotNull Boolean approved,
                                      @RequestHeader(USER_ID_HEADER) Long userId) {
-        log.info("User id={} is changing status of booking id={}, approved state: {}", userId,bookingId, approved);
+        log.info("User id={} is changing status of booking id={}, approved state: {}", userId, bookingId, approved);
         return bookingService.processRequest(bookingId, approved, userId);
     }
 

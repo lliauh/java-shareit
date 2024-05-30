@@ -10,9 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "items")
-@Getter
-@Setter
-@ToString
+@Data
 @RequiredArgsConstructor
 public class Item {
     @Id
@@ -44,15 +42,10 @@ public class Item {
         this.available = available;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Item)) return false;
-        return id != null && id.equals(((Item) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public Item(String name, String description, Boolean available, User owner) {
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.owner = owner;
     }
 }

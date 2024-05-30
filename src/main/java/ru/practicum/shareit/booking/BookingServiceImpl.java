@@ -29,13 +29,13 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final ItemService itemService;
-    private final BookingMapper bookingMapper;
 
     @Override
     public BookingOutDto bookItem(Long userId, BookingDto bookingDto) {
         userService.checkIfUserExists(userId);
 
-        Booking booking = bookingMapper.toBooking(bookingDto);
+        Booking booking = BookingMapper.toBooking(bookingDto);
+        booking.setItem(itemRepository.getReferenceById(bookingDto.getItemId()));
         checkIfBookingIsValid(booking, userId);
 
         booking.setBooker(userRepository.getReferenceById(userId));
@@ -74,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
                     "booking id=%d", userId, bookingId));
         }
 
-        return BookingMapper.toBookingOutDto(bookingRepository.getReferenceById(bookingId));
+        return BookingMapper.toBookingOutDto(booking);
     }
 
     @Override
