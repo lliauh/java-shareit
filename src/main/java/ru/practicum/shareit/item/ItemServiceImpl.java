@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingEntity;
@@ -11,6 +13,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestsRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
@@ -28,12 +31,16 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestsRepository itemRequestsRepository;
 
     @Override
     public ItemDto addItem(Long userId, ItemDto itemDto) {
         userService.checkIfUserExists(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(userRepository.getReferenceById(userId));
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(itemRequestsRepository.getReferenceById(itemDto.getRequestId()));
+        }
 
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
@@ -70,20 +77,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long itemId, Long userId) {
+    public ItemOutDto getItemById(Long itemId, Long userId) {
         checkIfItemExists(itemId);
 
-        ItemOutDto itemOutDto = addBookingsToItem(itemRepository.getReferenceById(itemId), userId);
+        Item item = itemRepository.getReferenceById(itemId);
+        ItemOutDto itemOutDto = addBookingsToItem(item, userId);
         addCommentsToItem(itemOutDto);
 
         return itemOutDto;
     }
 
     @Override
-    public List<ItemDto> getAllItemsByOwner(Long userId) {
+    public List<ItemDto> getAllItemsByOwner(Long userId, Integer from, Integer size) {
         userService.checkIfUserExists(userId);
 
-        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId);
+        PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by("id").ascending());
+        List<Item> items = itemRepository.findAllByOwnerId(userId, pageRequest);
 
         List<ItemDto> itemDtos = new ArrayList<>();
         for (Item item : items) {
@@ -96,14 +105,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String searchQuery, Long userId) {
+    public List<ItemDto> searchItems(String searchQuery, Long userId, Integer from, Integer size) {
         userService.checkIfUserExists(userId);
 
         if (searchQuery.isEmpty() || searchQuery.isBlank()) {
             return new ArrayList<>();
         }
 
-        return itemRepository.searchItems(searchQuery).stream()
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+
+        return itemRepository.searchItems(searchQuery, pageRequest).stream()
                 .filter(Item::getAvailable)
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -143,7 +154,7 @@ public class ItemServiceImpl implements ItemService {
         BookingEntity lbDto = new BookingEntity();
         BookingEntity nbDto = new BookingEntity();
 
-        if (isUserAnOwner(item.getId(), userId)) {
+        if (isUserAnOwner(item, userId)) {
             Optional<Booking> lastBooking = bookingRepository.getLastBooking(item.getId());
             Optional<Booking> nextBooking = bookingRepository.getNextBooking(item.getId());
 
@@ -173,8 +184,8 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private boolean isUserAnOwner(Long itemId, Long userId) {
-        return itemRepository.getReferenceById(itemId).getOwner().getId().equals(userId);
+    private boolean isUserAnOwner(Item item, Long userId) {
+        return item.getOwner().getId().equals(userId);
     }
 
     private void checkIfUserHasApprovedBookingInthePast(Long userId, Long itemId) {

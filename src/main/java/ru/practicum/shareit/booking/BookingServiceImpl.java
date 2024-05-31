@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -28,13 +29,13 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final ItemService itemService;
-    private final BookingMapper bookingMapper;
 
     @Override
     public BookingOutDto bookItem(Long userId, BookingDto bookingDto) {
         userService.checkIfUserExists(userId);
 
-        Booking booking = bookingMapper.toBooking(bookingDto);
+        Booking booking = BookingMapper.toBooking(bookingDto);
+        booking.setItem(itemRepository.getReferenceById(bookingDto.getItemId()));
         checkIfBookingIsValid(booking, userId);
 
         booking.setBooker(userRepository.getReferenceById(userId));
@@ -73,36 +74,39 @@ public class BookingServiceImpl implements BookingService {
                     "booking id=%d", userId, bookingId));
         }
 
-        return BookingMapper.toBookingOutDto(bookingRepository.getReferenceById(bookingId));
+        return BookingMapper.toBookingOutDto(booking);
     }
 
     @Override
-    public List<BookingOutDto> getUserBookingsByState(BookingSearchState state, Long userId) {
+    public List<BookingOutDto> getUserBookingsByState(BookingSearchState state, Long userId, Integer from,
+                                                      Integer size) {
         userService.checkIfUserExists(userId);
+
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
         switch (state) {
             case ALL:
-                return bookingRepository.getAllUserBookings(userId).stream()
+                return bookingRepository.getAllUserBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case CURRENT:
-                return bookingRepository.getCurrentUserBookings(userId).stream()
+                return bookingRepository.getCurrentUserBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case PAST:
-                return bookingRepository.getPastUserBookings(userId).stream()
+                return bookingRepository.getPastUserBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case FUTURE:
-                return bookingRepository.getFutureUserBookings(userId).stream()
+                return bookingRepository.getFutureUserBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case WAITING:
-                return bookingRepository.getUserBookingsWithStatusWaiting(userId).stream()
+                return bookingRepository.getUserBookingsWithStatusWaiting(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case REJECTED:
-                return bookingRepository.getUserBookingsWithStatusRejected(userId).stream()
+                return bookingRepository.getUserBookingsWithStatusRejected(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             default:
@@ -111,32 +115,35 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> getBookingsOnUserItemsByState(BookingSearchState state, Long userId) {
+    public List<BookingOutDto> getBookingsOnUserItemsByState(BookingSearchState state, Long userId, Integer from,
+                                                             Integer size) {
         userService.checkIfUserExists(userId);
+
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
         switch (state) {
             case ALL:
-                return bookingRepository.getAllOwnerBookings(userId).stream()
+                return bookingRepository.getAllOwnerBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case CURRENT:
-                return bookingRepository.getCurrentOwnerBookings(userId).stream()
+                return bookingRepository.getCurrentOwnerBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case PAST:
-                return bookingRepository.getPastOwnerBookings(userId).stream()
+                return bookingRepository.getPastOwnerBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case FUTURE:
-                return bookingRepository.getFutureOwnerBookings(userId).stream()
+                return bookingRepository.getFutureOwnerBookings(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case WAITING:
-                return bookingRepository.getOwnerBookingsWithStatusWaiting(userId).stream()
+                return bookingRepository.getOwnerBookingsWithStatusWaiting(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             case REJECTED:
-                return bookingRepository.getOwnerBookingsWithStatusRejected(userId).stream()
+                return bookingRepository.getOwnerBookingsWithStatusRejected(userId, pageRequest).stream()
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             default:

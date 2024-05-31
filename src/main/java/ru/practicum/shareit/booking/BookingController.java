@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.model.BookingSearchState;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public BookingOutDto processRequest(@PathVariable Long bookingId, @RequestParam @NotNull Boolean approved,
                                      @RequestHeader(USER_ID_HEADER) Long userId) {
-        log.info("User id={} is changing status of booking id={}, approved state: {}", userId,bookingId, approved);
+        log.info("User id={} is changing status of booking id={}, approved state: {}", userId, bookingId, approved);
         return bookingService.processRequest(bookingId, approved, userId);
     }
 
@@ -43,22 +44,32 @@ public class BookingController {
 
     @GetMapping
     public List<BookingOutDto> getUserBookingsByState(@RequestParam(defaultValue = "ALL") String state,
-                                                  @RequestHeader(USER_ID_HEADER) Long userId) {
-        log.info("User id={} is trying to get his bookings in state={}", userId, state);
+                                                      @RequestHeader(USER_ID_HEADER) Long userId,
+                                                      @RequestParam(required = false, defaultValue = "0")
+                                                          @Min(0) Integer from,
+                                                      @RequestParam(required = false, defaultValue = "10")
+                                                          @Min(1) Integer size) {
+        log.info("User id={} is trying to get his bookings in state={}, page starts from={}, size={}", userId, state,
+                from, size);
 
         BookingSearchState.checkSearchQueryState(state);
 
-        return bookingService.getUserBookingsByState(BookingSearchState.valueOf(state), userId);
+        return bookingService.getUserBookingsByState(BookingSearchState.valueOf(state), userId, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingOutDto> getBookingsOnUserItemsByState(@RequestParam(defaultValue = "ALL")
                                                                  String state,
-                                                             @RequestHeader(USER_ID_HEADER) Long userId) {
-        log.info("User id={} is trying to get bookings on his items in state={}", userId, state);
+                                                             @RequestHeader(USER_ID_HEADER) Long userId,
+                                                             @RequestParam(required = false, defaultValue = "0")
+                                                                 @Min(0) Integer from,
+                                                             @RequestParam(required = false, defaultValue = "10")
+                                                                 @Min(1) Integer size) {
+        log.info("User id={} is trying to get bookings on his items in state={}, page starts from={}, size={}", userId,
+                state, from, size);
 
         BookingSearchState.checkSearchQueryState(state);
 
-        return bookingService.getBookingsOnUserItemsByState(BookingSearchState.valueOf(state), userId);
+        return bookingService.getBookingsOnUserItemsByState(BookingSearchState.valueOf(state), userId, from, size);
     }
 }

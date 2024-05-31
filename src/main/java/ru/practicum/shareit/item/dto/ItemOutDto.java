@@ -16,6 +16,7 @@ public class ItemOutDto extends ItemDto {
     private String description;
     @NotNull
     private Boolean available;
+    private Long requestId;
     private BookingEntity lastBooking;
     private BookingEntity nextBooking;
     private List<CommentDto> comments;

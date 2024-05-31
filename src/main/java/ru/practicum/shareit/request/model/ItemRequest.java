@@ -5,12 +5,11 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests")
-@Getter
-@Setter
-@ToString
+@Data
 @RequiredArgsConstructor
 public class ItemRequest {
     @Id
@@ -21,18 +20,12 @@ public class ItemRequest {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requestor_id")
+    @JoinColumn(name = "requester_id")
     private User requester;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ItemRequest)) return false;
-        return id != null && id.equals(((ItemRequest) o).getId());
-    }
+    private LocalDateTime created;
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public ItemRequest(String description) {
+        this.description = description;
     }
 }
