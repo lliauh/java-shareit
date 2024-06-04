@@ -27,6 +27,7 @@ services:
       - POSTGRES_PASSWORD=password
       - DB_HOST=db
       - DB_PORT=5432
+
   gateway:
     build: gateway
     image: gateway
