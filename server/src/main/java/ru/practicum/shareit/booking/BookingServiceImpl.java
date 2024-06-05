@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             default:
-                throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+                return new ArrayList<>();
         }
     }
 
@@ -147,7 +148,7 @@ public class BookingServiceImpl implements BookingService {
                         .map(BookingMapper::toBookingOutDto)
                         .collect(Collectors.toList());
             default:
-                throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+                return new ArrayList<>();
         }
     }
 
@@ -163,14 +164,6 @@ public class BookingServiceImpl implements BookingService {
                 .equals(userId)) {
             throw new NoPermissionException(String.format("User id=%d can't book his own item id=%d",
                     userId, booking.getItem().getId()));
-        }
-
-        if (booking.getStart().isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Start date of the booking can't be in the past");
-        }
-
-        if (!booking.getEnd().isAfter(booking.getStart())) {
-            throw new ValidationException("End date of the booking should be after start date");
         }
     }
 

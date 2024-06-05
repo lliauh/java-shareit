@@ -8,9 +8,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.model.BookingSearchState;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Validated
@@ -24,13 +21,13 @@ public class BookingController {
 
     @PostMapping
     public BookingOutDto bookItem(@RequestHeader(USER_ID_HEADER) Long userId,
-                                  @RequestBody @Valid BookingDto bookingDto) {
+                                  @RequestBody BookingDto bookingDto) {
         log.info("Creating new item request from user id={}, booking details: {}", userId, bookingDto);
         return bookingService.bookItem(userId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingOutDto processRequest(@PathVariable Long bookingId, @RequestParam @NotNull Boolean approved,
+    public BookingOutDto processRequest(@PathVariable Long bookingId, @RequestParam Boolean approved,
                                         @RequestHeader(USER_ID_HEADER) Long userId) {
         log.info("User id={} is changing status of booking id={}, approved state: {}", userId, bookingId, approved);
         return bookingService.processRequest(bookingId, approved, userId);
@@ -46,9 +43,9 @@ public class BookingController {
     public List<BookingOutDto> getUserBookingsByState(@RequestParam(defaultValue = "ALL") String state,
                                                       @RequestHeader(USER_ID_HEADER) Long userId,
                                                       @RequestParam(required = false, defaultValue = "0")
-                                                      @Min(0) Integer from,
+                                                      Integer from,
                                                       @RequestParam(required = false, defaultValue = "10")
-                                                      @Min(1) Integer size) {
+                                                      Integer size) {
         log.info("User id={} is trying to get his bookings in state={}, page starts from={}, size={}", userId, state,
                 from, size);
 
@@ -60,9 +57,9 @@ public class BookingController {
                                                              String state,
                                                              @RequestHeader(USER_ID_HEADER) Long userId,
                                                              @RequestParam(required = false, defaultValue = "0")
-                                                             @Min(0) Integer from,
+                                                             Integer from,
                                                              @RequestParam(required = false, defaultValue = "10")
-                                                             @Min(1) Integer size) {
+                                                             Integer size) {
         log.info("User id={} is trying to get bookings on his items in state={}, page starts from={}, size={}", userId,
                 state, from, size);
 

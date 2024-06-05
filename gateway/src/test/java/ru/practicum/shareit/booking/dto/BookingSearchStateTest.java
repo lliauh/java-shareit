@@ -1,8 +1,7 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.booking.model.BookingSearchState;
 import ru.practicum.shareit.exception.ValidationException;
 
 public class BookingSearchStateTest {

@@ -25,6 +25,9 @@ public class BookingController {
     public ResponseEntity<Object> bookItem(@RequestHeader(USER_ID_HEADER) Long userId,
                                            @RequestBody @Valid BookingDto bookingDto) {
         log.info("Creating new item request from user id={}, booking details: {}", userId, bookingDto);
+
+        BookingDto.validateBooking(bookingDto);
+
         return bookingClient.bookItem(userId, bookingDto);
     }
 

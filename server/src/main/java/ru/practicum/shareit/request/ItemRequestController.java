@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestOutDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @Validated
@@ -22,7 +20,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto requestItem(@RequestHeader(USER_ID_HEADER) Long userId,
-                                      @RequestBody @Valid ItemRequestDto itemRequestDto) {
+                                      @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Creating new item request from user id={}, request details: {}", userId, itemRequestDto);
         return itemRequestService.requestItem(userId, itemRequestDto);
     }
@@ -35,8 +33,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestOutDto> getAllRequests(@RequestHeader(USER_ID_HEADER) Long userId,
-                                                  @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
-                                                  @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size) {
+                                                  @RequestParam(required = false, defaultValue = "0") Integer from,
+                                                  @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("User id={} is trying to get all requests, page starts from={}, size={}", userId, from, size);
 
         return itemRequestService.getAllRequests(userId, from, size);
