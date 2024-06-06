@@ -1,2 +1,2 @@
 # java-shareit
-Template repository for Shareit project.
+Shareit project by Alexander Muslimov.
